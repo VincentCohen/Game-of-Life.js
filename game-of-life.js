@@ -11,6 +11,8 @@ function GameOfLife(canvas, context, cellSize)
     this.canvas     = canvas;
     this.ctx        = context;
     this.cellSize   = cellSize || 10;
+    this.currentGen = []; // store as key = x val = y
+    this.nextGen    = [];
 
     // draw grid
     for (var x = 10; x < this.canvas.width; x += this.cellSize) {
@@ -35,4 +37,15 @@ GameOfLife.prototype.live = function()
 GameOfLife.prototype.update = function()
 {
     // update each frame
+}
+
+GameOfLife.prototype.drawCell = function(x, y)
+{
+    var x =  Math.round(x/10) *10;
+    var y =  Math.round(y/10) *10;
+
+    this.currentGen[x] = y;
+    this.ctx.fillRect( x, y, this.cellSize, this.cellSize);
+
+    console.log(this.currentGen);
 }

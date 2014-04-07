@@ -2,20 +2,40 @@
 <html>
 <head>
     <title>Game of Life</title>
+    <style>
+        #platform {
+            border:1px solid #ddd;
+            border-top:0;
+            display:block;
+            margin: 20px auto;
+        }
+    </style>
 </head>
     <body>
-        <canvas id="platform" width="800" height="600" style="border:1px solid #ddd;border-top:0;">
+        <canvas id="platform" width="800" height="600">
             Oops!.. Your browser does not support canvas.
         </canvas>
 
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" ></script>
         <script src="game-of-life.js"></script>
         <script>
+
             var canvas 	= document.getElementById('platform');
             var ctx 	= canvas.getContext('2d');
 
             var myGameOfLife = new GameOfLife(canvas, ctx);
 
             myGameOfLife.live();
+
+            myGameOfLife.drawCell(100, 200);
+            myGameOfLife.drawCell(140, 200);
+            myGameOfLife.drawCell(125, 200);
+
+            $('#platform').click(function(e){
+                var offset = $(this).offset();
+                myGameOfLife.drawCell(e.clientX - offset.left, e.clientY - offset.top);
+            });
+
         </script>
     </body>
 </html>
