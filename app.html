@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game of Life</title>
+</head>
+    <body>
+        <canvas id="platform" width="800" height="600" style="border:1px solid #ddd;border-top:0;">
+            Oops!.. Your browser does not support canvas.
+        </canvas>
+
+        <script src="game-of-life.js"></script>
+        <script>
+            var canvas 	= document.getElementById('platform');
+            var ctx 	= canvas.getContext('2d');
+
+            var myGameOfLife = new GameOfLife(canvas, ctx);
+
+            myGameOfLife.live();
+        </script>
+    </body>
+</html>
