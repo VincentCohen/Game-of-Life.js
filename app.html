@@ -33,7 +33,18 @@
 
             $('#platform').click(function(e){
                 var offset = $(this).offset();
-                myGameOfLife.drawCell(e.clientX - offset.left, e.clientY - offset.top);
+                var cellStatus = myGameOfLife.getCellStatus(e.clientX - offset.left, e.clientY - offset.top);
+
+                if (!cellStatus)
+                {
+                    myGameOfLife.drawCell(e.clientX - offset.left, e.clientY - offset.top);
+                }
+                else if(cellStatus == 'alive')
+                {
+                    //myGameOfLife.drawCell(e.clientX - offset.left, e.clientY - offset.top, 'dead');
+                    myGameOfLife.removeCell(e.clientX - offset.left, e.clientY - offset.top);
+                }
+                //myGameOfLife.drawCell(e.clientX - offset.left, e.clientY - offset.top);
             });
 
         </script>
