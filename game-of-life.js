@@ -12,15 +12,13 @@ function GameOfLife(canvas, context, cellSize)
     this.ctx        = context;
     this.cellSize   = cellSize || 10;
     this.healthColors = {'alive': '#64ff93', 'dead': '#000', 'dieing': '#ff8d8d'};
-    this.currentGen = []; // store as key = x val = y
+    this.currentGen = new Array(); // store as key = x val = y
     this.nextGen    = [];
 
     // draw grid
     for (var x = 10; x < this.canvas.width; x += this.cellSize) {
         this.ctx.moveTo(x, 0);
         this.ctx.lineTo(x, this.canvas.width);
-
-        this.currentGen[x] = [];
     }
 
     for (var y = 0.5; y < this.canvas.height; y += this.cellSize) {
@@ -44,8 +42,9 @@ GameOfLife.prototype.update = function()
 
 GameOfLife.prototype.getCellStatus = function(x, y)
 {
-    var x =  Math.round(x/this.cellSize) * this.cellSize;
-    var y =  Math.round(y/this.cellSize) * this.cellSize;
+    var xy = this.__mathXY(x,y);
+    x = xy.x;
+    y = xy.y;
 
     if (typeof this.currentGen[x] !== 'undefined' && typeof this.currentGen[x][y] !== 'undefined')
         return this.currentGen[x][y];
@@ -55,18 +54,24 @@ GameOfLife.prototype.getCellStatus = function(x, y)
 
 GameOfLife.prototype.removeCell = function(x, y)
 {
-    var y =  Math.round(y/this.cellSize) * this.cellSize;
-    var x =  Math.round(x/this.cellSize) * this.cellSize;
+    var xy = this.__mathXY(x,y);
+    x = xy.x;
+    y = xy.y;
 
+    console.log('DELETE' + x + ' - ' + y);
+
+//    delete this.currentGen[x][y];
     delete this.currentGen[x][y];
 
-    console.log(this.currentGen);
+    console.log(this.currentGen);   // item seems to be presend
+    console.log(this.currentGen[x][y]); // should somehow does return undefined
 }
 
 GameOfLife.prototype.drawCell = function(x, y, health)
 {
-    var y =  Math.round(y/this.cellSize) * this.cellSize;
-    var x =  Math.round(x/this.cellSize) * this.cellSize;
+    var xy = this.__mathXY(x,y);
+    x = xy.x;
+    y = xy.y;
 
     var health = health || 'alive';
 
@@ -77,6 +82,17 @@ GameOfLife.prototype.drawCell = function(x, y, health)
 
     this.ctx.fillStyle = this.healthColors[health];
     this.ctx.fillRect( x, y, this.cellSize, this.cellSize);
+}
 
-    console.log(this.currentGen);
+GameOfLife.prototype.__mathXY = function(x,y)
+{
+    x = Math.floor(x/this.cellSize) * this.cellSize;
+    y = Math.floor(y/this.cellSize) * this.cellSize;
+
+    return {x: x, y:y};
+}
+
+GameOfLife.prototype.getCurrentGen = function()
+{
+    return this.currentGen;
 }
