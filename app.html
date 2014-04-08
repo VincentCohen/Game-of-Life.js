@@ -4,7 +4,7 @@
     <title>Game of Life</title>
     <style>
         #platform {
-            border:1px solid #ddd;
+            /*border:1px solid #ddd;*/
             border-top:0;
             display:block;
             margin: 20px auto;
@@ -20,12 +20,23 @@
         <script src="game-of-life.js"></script>
         <script>
 
+            window.requestAnimFrame = (function(){
+                return  window.requestAnimationFrame       ||
+                        window.webkitRequestAnimationFrame ||
+                        window.mozRequestAnimationFrame    ||
+                        function( callback ){
+                            window.setTimeout(callback, 1000 / 60);
+                        };
+            })();
+
+
             var canvas 	= document.getElementById('platform');
             var ctx 	= canvas.getContext('2d');
+            var grid    = new Image();
+                grid.src = 'grid.png';
 
-            var myGameOfLife = new GameOfLife(canvas, ctx);
+            var myGameOfLife = new GameOfLife(canvas, ctx, grid, 10);
 
-            myGameOfLife.live();
 
 //            myGameOfLife.drawCell(100, 200);
 //            myGameOfLife.drawCell(140, 200);
@@ -41,11 +52,19 @@
                 }
                 else if(cellStatus == 'alive')
                 {
-                    //myGameOfLife.drawCell(e.clientX - offset.left, e.clientY - offset.top, 'dead');
                     myGameOfLife.removeCell(e.clientX - offset.left, e.clientY - offset.top);
                 }
-                //myGameOfLife.drawCell(e.clientX - offset.left, e.clientY - offset.top);
             });
+
+            function engine()
+            {
+                myGameOfLife.update();
+
+                requestAnimFrame(engine);
+            }
+
+            myGameOfLife.live();
+            engine();
 
         </script>
     </body>

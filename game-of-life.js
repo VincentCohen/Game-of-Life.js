@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-function GameOfLife(canvas, context, cellSize)
+function GameOfLife(canvas, context, grid, cellSize)
 {
     this.canvas     = canvas;
     this.ctx        = context;
@@ -14,30 +14,44 @@ function GameOfLife(canvas, context, cellSize)
     this.healthColors = {'alive': '#64ff93', 'dead': '#000', 'dieing': '#ff8d8d'};
     this.currentGen = new Array(); // store as key = x val = y
     this.nextGen    = [];
-
-    // draw grid
-    for (var x = 10; x < this.canvas.width; x += this.cellSize) {
-        this.ctx.moveTo(x, 0);
-        this.ctx.lineTo(x, this.canvas.width);
-    }
-
-    for (var y = 0.5; y < this.canvas.height; y += this.cellSize) {
-        this.ctx.moveTo(0, y);
-        this.ctx.lineTo(this.canvas.width, y);
-    }
-
-    this.ctx.strokeStyle = "#ddd";
-    this.ctx.stroke();
+    this.grid       = grid;
 }
 
 GameOfLife.prototype.live = function()
 {
     //alert('living in the name of..');
+    // draw grid
+//    for (var x = 0.5; x < this.canvas.width; x += this.cellSize) {
+//        this.ctx.moveTo(x, 0);
+//        this.ctx.lineTo(x, this.canvas.width);
+//    }
+//
+//    for (var y = 0.5; y < this.canvas.height; y += this.cellSize) {
+//        this.ctx.moveTo(0, y);
+//        this.ctx.lineTo(this.canvas.width, y);
+//    }
+//
+//    this.ctx.strokeStyle = "#ddd";
+//    this.ctx.stroke();
+//    this.ctx.save();
 }
 
 GameOfLife.prototype.update = function()
 {
-    // update each frame
+    this.advanceGeneration();
+    this.drawGrid();
+    this.drawCells();
+}
+
+GameOfLife.prototype.drawGrid = function()
+{
+    console.log('drawing grid..');
+}
+
+GameOfLife.prototype.advanceGeneration = function()
+{
+    // the 'hard' part, cell status updates etc.
+    console.log('cells dieing..');
 }
 
 GameOfLife.prototype.getCellStatus = function(x, y)
@@ -65,6 +79,11 @@ GameOfLife.prototype.removeCell = function(x, y)
 
     console.log(this.currentGen);   // item seems to be presend
     console.log(this.currentGen[x][y]); // should somehow does return undefined
+}
+
+GameOfLife.prototype.drawCells = function()
+{
+
 }
 
 GameOfLife.prototype.drawCell = function(x, y, health)
