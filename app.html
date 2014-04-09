@@ -35,10 +35,8 @@
 
             var canvas 	= document.getElementById('platform');
             var ctx 	= canvas.getContext('2d');
-            var grid    = new Image();
-                grid.src = 'grid.png';
 
-            var myGameOfLife = new GameOfLife(canvas, ctx, grid, 10);
+            var myGameOfLife = new GameOfLife(canvas, ctx, 10);
 
             $('#platform').click(function(e){
                 var offset = $(this).offset();

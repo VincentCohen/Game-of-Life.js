@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-function GameOfLife(canvas, context, grid, cellSize)
+function GameOfLife(canvas, context, cellSize)
 {
     this.canvas     = canvas;
     this.ctx        = context;
@@ -14,7 +14,6 @@ function GameOfLife(canvas, context, grid, cellSize)
     this.healthColors = {'alive': '#64ff93', 'dead': '#000', 'dieing': '#ff8d8d'};
     this.currentGen = new Array(); // store as key = x val = y
     this.nextGen    = [];
-    this.grid       = grid;
     this.gridX      = new Array();
     this.gridY      = new Array();
 
