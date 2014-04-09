@@ -15,43 +15,61 @@ function GameOfLife(canvas, context, grid, cellSize)
     this.currentGen = new Array(); // store as key = x val = y
     this.nextGen    = [];
     this.grid       = grid;
+    this.gridX      = new Array();
+    this.gridY      = new Array();
+
+    /*
+        To avoid performance issues we store the grid based on the canvas width and selected cellsize
+        in a cached variable and pre-draw the grid on it.
+        This way when drawn the grid is already saved in a canvas object which can be used opon drawing.
+        See this.drawGrid();
+     */
+    var __canvasCache = document.createElement("canvas");
+        __canvasCache.width     = this.canvas.width;
+        __canvasCache.height    = this.canvas.height;
+
+        __ctxCache    = __canvasCache.getContext("2d");
+
+
+    for (var x = 0.5; x < this.canvas.width; x += this.cellSize) {
+        __ctxCache.moveTo(x, 0);
+        __ctxCache.lineTo(x, this.canvas.width);
+    }
+
+    for (var y = 0.5; y < this.canvas.height; y += this.cellSize) {
+        __ctxCache.moveTo(0, y);
+        __ctxCache.lineTo(this.canvas.width, y);
+    }
+
+    __ctxCache.strokeStyle = "#ddd";
+    __ctxCache.stroke();
+    __ctxCache.save();
+
+    this.__gridCached = __ctxCache.canvas;
 }
 
 GameOfLife.prototype.live = function()
 {
-    //alert('living in the name of..');
-    // draw grid
-//    for (var x = 0.5; x < this.canvas.width; x += this.cellSize) {
-//        this.ctx.moveTo(x, 0);
-//        this.ctx.lineTo(x, this.canvas.width);
-//    }
-//
-//    for (var y = 0.5; y < this.canvas.height; y += this.cellSize) {
-//        this.ctx.moveTo(0, y);
-//        this.ctx.lineTo(this.canvas.width, y);
-//    }
-//
-//    this.ctx.strokeStyle = "#ddd";
-//    this.ctx.stroke();
-//    this.ctx.save();
+
 }
 
 GameOfLife.prototype.update = function()
 {
     this.advanceGeneration();
     this.drawGrid();
-    this.drawCells();
+//    this.drawCells();
 }
 
 GameOfLife.prototype.drawGrid = function()
 {
-    console.log('drawing grid..');
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.drawImage(this.__gridCached, 0, 0); // use the cached canvas object
+    this.ctx.save();
 }
 
 GameOfLife.prototype.advanceGeneration = function()
 {
     // the 'hard' part, cell status updates etc.
-    console.log('cells dieing..');
 }
 
 GameOfLife.prototype.getCellStatus = function(x, y)
@@ -72,13 +90,10 @@ GameOfLife.prototype.removeCell = function(x, y)
     x = xy.x;
     y = xy.y;
 
-    console.log('DELETE' + x + ' - ' + y);
+    if (delete this.currentGen[x][y])
+        return true;
 
-//    delete this.currentGen[x][y];
-    delete this.currentGen[x][y];
-
-    console.log(this.currentGen);   // item seems to be presend
-    console.log(this.currentGen[x][y]); // should somehow does return undefined
+    return false;
 }
 
 GameOfLife.prototype.drawCells = function()
