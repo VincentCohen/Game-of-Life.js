@@ -12,10 +12,10 @@ function GameOfLife(canvas, context, cellSize)
     this.ctx        = context;
     this.cellSize   = cellSize || 10;
     this.healthColors = {alive: '#64ff93', dead: '#000000', dieing: '#ff8d8d'};
-    this.currentGen = new Array(); // store as key = x val = y
-    this.nextGen    = [];
-    this.gridX      = new Array();
-    this.gridY      = new Array();
+    this.currentGen = {}; // store as key = x val = y
+    this.nextGen    = {};
+    this.gridX      = {};
+    this.gridY      = {};
 
 
     /**
@@ -59,7 +59,7 @@ GameOfLife.prototype.lifeCycle = function()
 {
     this.drawGrid();
     this.drawCells(this.currentGen);
-//    this.currentGen = this.advanceGeneration(this.currentGen);
+    this.currentGen = this.advanceGeneration(this.currentGen);
 }
 
 /**
@@ -69,7 +69,7 @@ GameOfLife.prototype.lifeCycle = function()
  */
 GameOfLife.prototype.advanceGeneration = function(currentGeneration)
 {
-    var nextGeneration = JSON.parse(JSON.stringify(currentGeneration)); // clones the object
+    var nextGeneration = jQuery.extend(true, {}, currentGeneration);
 
     for (var cellX in currentGeneration)
     {
