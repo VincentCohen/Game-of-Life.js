@@ -24,6 +24,8 @@
             <li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.</li>
         </ol>
 
+        <a href="https://github.com/VincentCohen/Game-of-Life.js" title="github">Github</a>
+
         <button id="cycle">Next generation</button>
         <button id="auto">Let life be lived</button>
 
@@ -52,6 +54,14 @@
             var ctx 	= canvas.getContext('2d');
 
             var myGameOfLife = new GameOfLife(canvas, ctx, 20, true);
+
+            myGameOfLife.drawCell(200, 150);
+            myGameOfLife.drawCell(210, 160);
+            myGameOfLife.drawCell(220, 170);
+            myGameOfLife.drawCell(230, 180);
+            myGameOfLife.drawCell(250, 180);
+            myGameOfLife.drawCell(260, 180);
+
 
             $('#cycle').click(function(){
                myGameOfLife.lifeCycle();
