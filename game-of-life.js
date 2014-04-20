@@ -6,17 +6,16 @@
  * To change this template use File | Settings | File Templates.
  */
 
-function GameOfLife(canvas, context, cellSize)
+function GameOfLife(canvas, context, cellSize, gridBorder)
 {
     this.canvas     = canvas;
     this.ctx        = context;
     this.cellSize   = cellSize || 10;
-    this.healthColors = {alive: '#64ff93', dead: '#000000', dieing: '#ff8d8d'};
-    this.currentGen = {}; // store as key = x val = y
-    this.nextGen    = {};
+    this.healthColors = {alive: '#64ff93', dead: '#ffffff', dieing: '#ff8d8d'};
+    this.currentGeneration = {}; // store as key = x val = y
     this.gridX      = {};
     this.gridY      = {};
-
+    this.hasGridBorder = gridBorder;
 
     /**
      * To avoid performance issues we store the grid in an canvas object and cached variable then pre-draw the grid on it.
@@ -37,12 +36,21 @@ function GameOfLife(canvas, context, cellSize)
     {
         __ctxCache.moveTo(x, 0);
         __ctxCache.lineTo(x, this.canvas.width);
+        var cellX = this.__mathXY(x);
+            cellX = cellX.x;
+
+        this.gridX[cellX] = {};
     }
 
     for (var y = 0.5; y < this.canvas.height; y += this.cellSize)
     {
         __ctxCache.moveTo(0, y);
         __ctxCache.lineTo(this.canvas.width, y);
+
+        var cellY = this.__mathXY(0, y);
+            cellY = cellY.y;
+
+        this.gridY[cellY] = {};
     }
 
     __ctxCache.strokeStyle = "#ddd";
@@ -50,17 +58,34 @@ function GameOfLife(canvas, context, cellSize)
     __ctxCache.save();
 
     this.__gridCached = __ctxCache.canvas;
-}
 
-/**
+    this.__createCells();
+
+    this.lifeCycle();
+};
+
+GameOfLife.prototype.__createCells = function()
+{
+    for (var x in this.gridX)
+    {
+        this.currentGeneration[x] = {};
+        for (var y in this.gridY)
+        {
+            this.currentGeneration[x][y] = 'dead';
+        }
+    }
+};
+    /**
  * Responsible for methods and actions for each frame update
  */
 GameOfLife.prototype.lifeCycle = function()
 {
-    this.drawGrid();
-    this.drawCells(this.currentGen);
-    this.currentGen = this.advanceGeneration(this.currentGen);
-}
+    if (this.hasGridBorder)
+        this.drawGrid();
+
+    this.drawCells(this.currentGeneration);
+    this.currentGeneration = this.advanceGeneration(this.currentGeneration);
+};
 
 /**
  * Returns new generation with updated life
@@ -73,24 +98,77 @@ GameOfLife.prototype.advanceGeneration = function(currentGeneration)
 
     for (var cellX in currentGeneration)
     {
-        if (typeof cellX !== 'undefined' && currentGeneration[cellX] != 'undefined' )
+        for (var cellY in currentGeneration[cellX])
         {
-            for (var cellY in currentGeneration[cellX])
-            {
-                if (this.getCellStatus(cellX, cellY, currentGeneration) == 'alive')
-                {
-                    nextGeneration[cellX][cellY] = 'dead';
-                }
+            var cellState = 'dead'; // asume all cells are dead
+            var isNewBorn = false;
+            var neighbours = this.getNeighbours(cellX, cellY);
 
-                if (this.getCellStatus(cellX, cellY, currentGeneration) == 'dead')
+            if (currentGeneration[cellX][cellY] == 'alive')
+            {
+                if (neighbours == 2 || neighbours == 3)
+                    cellState = 'alive';
+            }
+            else
+            {
+                if (neighbours == 3)
                 {
-                    nextGeneration[cellX][cellY] = 'alive';
+                    cellState = 'alive';
+                    isNewBorn = true;
                 }
             }
+
+            nextGeneration[cellX][cellY] = cellState;
         }
     }
 
     return nextGeneration;
+};
+
+
+GameOfLife.prototype.getNeighbours = function(x, y)
+{
+    var neighbours = 0;
+    var cellSize = this.cellSize;
+    var cellXY = this.__mathXY(x,y);
+
+    x = cellXY.x;
+    y = cellXY.y;
+
+    if (this.currentGeneration[x][y-cellSize] && this.currentGeneration[x][y-cellSize] == 'alive')
+        neighbours++;
+
+
+    if (this.currentGeneration[x][y+cellSize] && this.currentGeneration[x][y+cellSize] == 'alive')
+        neighbours++;
+
+
+    if (this.currentGeneration[x-cellSize])
+    {
+        if (this.currentGeneration[x-cellSize][y] && this.currentGeneration[x-cellSize][y] == 'alive' )
+            neighbours++;
+
+        if (this.currentGeneration[x-cellSize][y-cellSize] && this.currentGeneration[x-cellSize][y-cellSize] == 'alive')
+            neighbours++;
+
+        if (this.currentGeneration[x-cellSize][y+cellSize] && this.currentGeneration[x-cellSize][y+cellSize] == 'alive')
+            neighbours++;
+    }
+
+    if (this.currentGeneration[x+cellSize])
+    {
+        if (this.currentGeneration[x+cellSize][y] && this.currentGeneration[x+cellSize][y] == 'alive')
+            neighbours++;
+
+        if (this.currentGeneration[x+cellSize][y-cellSize] && this.currentGeneration[x+cellSize][y-cellSize] == 'alive')
+            neighbours++;
+
+        if (this.currentGeneration[x+cellSize][y+cellSize] && this.currentGeneration[x+cellSize][y+cellSize] == 'alive')
+            neighbours++;
+    }
+
+
+    return neighbours;
 }
 
 /**
@@ -99,54 +177,11 @@ GameOfLife.prototype.advanceGeneration = function(currentGeneration)
 GameOfLife.prototype.drawGrid = function()
 {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
     this.ctx.drawImage(this.__gridCached, 0, 0); // use the cached canvas object
     this.ctx.save();
-}
+};
 
-/**
- * Retrieves status of a existing cell or creates the cell if it does not exist yet
- *
- * @param x
- * @param y
- * @returns {*}
- */
-GameOfLife.prototype.getCellStatus = function(x, y, generation)
-{
-    var xy = this.__mathXY(x,y);
-    x = xy.x;
-    y = xy.y;
-
-    var generation = generation || this.currentGen;
-
-    if (typeof generation[x] !== 'undefined')
-    {
-        if (typeof generation[x][y] !== 'undefined')
-        {
-            return generation[x][y];
-        }
-    }
-
-    return false;
-}
-
-/**
- * Removes a Cell based on X and Y coords
- *
- * @param x
- * @param y
- * @returns {boolean}
- */
-GameOfLife.prototype.removeCell = function(x, y, generation)
-{
-    var xy = this.__mathXY(x,y);
-    x = xy.x;
-    y = xy.y;
-
-    if (delete generation[x][y])
-        return generation;
-
-    return false;
-}
 
 /**
  * Draws the cells based on the given generation
@@ -157,15 +192,12 @@ GameOfLife.prototype.drawCells = function(generation)
 {
     for (var cellX in generation)
     {
-        if (typeof cellX !== 'undefined' && generation[cellX] != 'undefined' )
+        for (var cellY in generation[cellX])
         {
-            for (var cellY in generation[cellX])
-            {
-                this.drawCell(cellX, cellY, generation[cellX][cellY]);
-            }
+            this.drawCell(cellX, cellY, generation[cellX][cellY]);
         }
     }
-}
+};
 
 /**
  * Draws a single cell
@@ -182,14 +214,19 @@ GameOfLife.prototype.drawCell = function(x, y, health)
 
     var health = health || 'alive';
 
-    if (typeof this.currentGen[x] === 'undefined')
-        this.currentGen[x] = [];
-
-    this.currentGen[x][y] = health;
+    this.currentGeneration[x][y] = health;
 
     this.ctx.fillStyle = this.healthColors[health];
-    this.ctx.fillRect( x, y, this.cellSize, this.cellSize);
-}
+
+    if (this.hasGridBorder)
+    {
+        this.ctx.fillRect( x+0.25, y+0.25, this.cellSize-0.5, this.cellSize-0.5);
+    }
+    else
+    {
+        this.ctx.fillRect( x, y, this.cellSize, this.cellSize);
+    }
+};
 
 /**
  * Returns X and Y positions based on cell size
@@ -202,17 +239,7 @@ GameOfLife.prototype.drawCell = function(x, y, health)
 GameOfLife.prototype.__mathXY = function(x,y)
 {
     x = Math.floor(x/this.cellSize) * this.cellSize;
-    y = Math.floor(y/this.cellSize) * this.cellSize;
+    y = Math.floor(y/this.cellSize) * this.cellSize || 0;
 
     return {x: x, y:y};
-}
-
-/**
- * Returns current generation
- *
- * @returns {*}
- */
-GameOfLife.prototype.getCurrentGen = function()
-{
-    return this.currentGen;
-}
+};

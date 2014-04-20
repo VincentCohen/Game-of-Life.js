@@ -23,6 +23,10 @@
             <li>Any live cell with more than three live neighbours dies, as if by overcrowding.</li>
             <li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.</li>
         </ol>
+
+        <button id="cycle">Next generation</button>
+        <button id="auto">Let life be lived</button>
+
         <canvas id="platform" width="800" height="600">
             Oops!.. Your browser does not support canvas.
         </canvas>
@@ -47,25 +51,21 @@
             var canvas 	= document.getElementById('platform');
             var ctx 	= canvas.getContext('2d');
 
-            var myGameOfLife = new GameOfLife(canvas, ctx, 10);
-            myGameOfLife.drawCell(1,1);
-            myGameOfLife.drawCell(20,20);
-            myGameOfLife.drawCell(30,30);
-            myGameOfLife.drawCell(40,40);
+            var myGameOfLife = new GameOfLife(canvas, ctx, 20, true);
+
+            $('#cycle').click(function(){
+               myGameOfLife.lifeCycle();
+            });
 
             $('#platform').click(function(e)
             {
                 var offset = $(this).offset();
-                var cellStatus = myGameOfLife.getCellStatus(e.clientX - offset.left, e.clientY - offset.top);
+                myGameOfLife.drawCell(e.clientX - offset.left, e.clientY - offset.top);
+            });
 
-                if (!cellStatus)
-                {
-                    myGameOfLife.drawCell(e.clientX - offset.left, e.clientY - offset.top);
-                }
-                else if(cellStatus == 'alive')
-                {
-//                    myGameOfLife.removeCell(e.clientX - offset.left, e.clientY - offset.top);
-                }
+            $('#auto').click(function()
+            {
+                engine();
             });
 
             function engine()
@@ -74,8 +74,6 @@
 
                 requestAnimFrame(engine);
             }
-
-            engine();
 
         </script>
     </body>
