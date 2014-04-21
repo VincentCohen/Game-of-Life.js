@@ -64,6 +64,10 @@ function GameOfLife(canvas, context, cellSize, gridBorder)
     this.lifeCycle();
 };
 
+
+/**
+ * Creates cells based on grid
+ */
 GameOfLife.prototype.__createCells = function()
 {
     for (var x in this.gridX)
@@ -75,7 +79,9 @@ GameOfLife.prototype.__createCells = function()
         }
     }
 };
-    /**
+
+
+/**
  * Responsible for methods and actions for each frame update
  */
 GameOfLife.prototype.lifeCycle = function()
@@ -86,6 +92,7 @@ GameOfLife.prototype.lifeCycle = function()
     this.drawCells(this.currentGeneration);
     this.currentGeneration = this.advanceGeneration(this.currentGeneration);
 };
+
 
 /**
  * Returns new generation with updated life
@@ -126,6 +133,13 @@ GameOfLife.prototype.advanceGeneration = function(currentGeneration)
 };
 
 
+/**
+ * Calculates amount of neighbours based on x and y position
+ *
+ * @param x
+ * @param y
+ * @returns {number}
+ */
 GameOfLife.prototype.getNeighbours = function(x, y)
 {
     var neighbours = 0;
@@ -171,6 +185,7 @@ GameOfLife.prototype.getNeighbours = function(x, y)
     return neighbours;
 }
 
+
 /**
  * Draws the grid based on the cached __gridCached var, which is essentially and image created from a canvas object
  */
@@ -198,6 +213,7 @@ GameOfLife.prototype.drawCells = function(generation)
         }
     }
 };
+
 
 /**
  * Draws a single cell
@@ -227,6 +243,7 @@ GameOfLife.prototype.drawCell = function(x, y, health)
         this.ctx.fillRect( x, y, this.cellSize, this.cellSize);
     }
 };
+
 
 /**
  * Returns X and Y positions based on cell size
