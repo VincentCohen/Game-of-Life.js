@@ -3,39 +3,62 @@
 <head>
     <title>Game of Life</title>
     <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-size: 12px;
             font-family: helvetica;
         }
 
+        a { color: #e3e3e3}
+
         #platform {
             /*border:1px solid #ddd;*/
             border-top:0;
             display:block;
-            margin: 20px auto;
+            margin: 0px auto;
+        }
+
+        .contents {
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            padding: 20px;
+            width: 300px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
         }
     </style>
 </head>
     <body>
-        <ol>
-            <li>Any live cell with fewer than two live neighbours dies, as if caused by under-population.</li>
-            <li>Any live cell with two or three live neighbours lives on to the next generation.</li>
-            <li>Any live cell with more than three live neighbours dies, as if by overcrowding.</li>
-            <li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.</li>
-        </ol>
+        <div class="contents">
+            <ol>
+                <li>Any live cell with fewer than two live neighbours dies, as if caused by under-population.</li>
+                <li>Any live cell with two or three live neighbours lives on to the next generation.</li>
+                <li>Any live cell with more than three live neighbours dies, as if by overcrowding.</li>
+                <li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.</li>
+            </ol>
 
-        <a href="https://github.com/VincentCohen/Game-of-Life.js" title="github">Github</a>
+            <a href="https://github.com/VincentCohen/Game-of-Life.js" title="github">Github</a>
 
-        <button id="cycle">Next generation</button>
-        <button id="auto">Let life be lived</button>
+            <button id="cycle">Next generation</button>
+            <button id="auto">Let life be lived</button>
+        </div>
 
-        <canvas id="platform" width="800" height="600">
+        <canvas id="platform" width="" height="">
             Oops!.. Your browser does not support canvas.
         </canvas>
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" ></script>
         <script src="game-of-life.js"></script>
         <script>
+
+            $("#platform").attr('width', $(window).width());
+            $("#platform").attr('height', $(window).height());
+
             // requestAnimationFrame() shim by Paul Irish
             // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
             window.requestAnimFrame = (function() {
@@ -53,14 +76,53 @@
             var canvas 	= document.getElementById('platform');
             var ctx 	= canvas.getContext('2d');
 
-            var myGameOfLife = new GameOfLife(canvas, ctx, 20, true);
+            var myGameOfLife = new GameOfLife(canvas, ctx, 40, true);
 
-            myGameOfLife.drawCell(200, 150);
-            myGameOfLife.drawCell(210, 160);
-            myGameOfLife.drawCell(220, 170);
-            myGameOfLife.drawCell(230, 180);
-            myGameOfLife.drawCell(250, 180);
-            myGameOfLife.drawCell(260, 180);
+            // glider
+            myGameOfLife.drawCell(540, 40);
+            myGameOfLife.drawCell(540, 40);
+            myGameOfLife.drawCell(580, 40);
+            myGameOfLife.drawCell(620, 40);
+            myGameOfLife.drawCell(660, 40);
+
+            myGameOfLife.drawCell(660, 80);
+            myGameOfLife.drawCell(660, 120);
+            myGameOfLife.drawCell(620, 160);
+
+            myGameOfLife.drawCell(500, 160);
+
+            myGameOfLife.drawCell(480, 80);
+
+            // second glider
+            myGameOfLife.drawCell(140, 40);
+            myGameOfLife.drawCell(140, 40);
+            myGameOfLife.drawCell(180, 40);
+            myGameOfLife.drawCell(220, 40);
+            myGameOfLife.drawCell(260, 40);
+
+            myGameOfLife.drawCell(260, 80);
+            myGameOfLife.drawCell(260, 120);
+            myGameOfLife.drawCell(220, 160);
+
+            myGameOfLife.drawCell(200, 160);
+
+            myGameOfLife.drawCell(280, 80);
+
+
+            // third glider
+            myGameOfLife.drawCell(140, 440);
+            myGameOfLife.drawCell(140, 440);
+            myGameOfLife.drawCell(180, 440);
+            myGameOfLife.drawCell(220, 440);
+            myGameOfLife.drawCell(260, 440);
+
+            myGameOfLife.drawCell(260, 480);
+            myGameOfLife.drawCell(260, 520);
+            myGameOfLife.drawCell(220, 560);
+
+            myGameOfLife.drawCell(200, 560);
+
+            myGameOfLife.drawCell(280, 480);
 
 
             $('#cycle').click(function(){
