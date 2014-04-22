@@ -140,11 +140,30 @@
                 engine();
             });
 
+            /**
+             * http://codetheory.in/controlling-the-frame-rate-with-requestanimationframe/
+             *
+             * Framerate controlling by CodeTheory
+             */
+            var fps = 5;
+            var now;
+            var then = Date.now();
+            var interval = 1000/fps;
+            var delta;
+
             function engine()
             {
-                myGameOfLife.lifeCycle();
-
                 requestAnimFrame(engine);
+
+                now = Date.now();
+                delta = now - then;
+
+                if (delta > interval)
+                {
+                    then = now - (delta % interval);
+
+                    myGameOfLife.lifeCycle();
+                }
             }
 
         </script>
