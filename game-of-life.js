@@ -1,10 +1,4 @@
-/**
- * Created with JetBrains PhpStorm.
- * User: vincent
- * Date: 4/7/14
- * Time: 9:25 PM
- * To change this template use File | Settings | File Templates.
- */
+
 
 function GameOfLife(canvas, context, cellSize, gridBorder)
 {
